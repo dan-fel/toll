@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TollCalcLib", "TollCalcLib\TollCalcLib.csproj", "{5723C06B-0BE4-449E-8D14-A09D41C32264}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TollCalcTest", "TollCalcTest\TollCalcTest.csproj", "{B7A49964-CF6A-442D-8C13-AC3059ECA15C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toll", "Toll\Toll.csproj", "{089FB87B-FA32-476E-A79D-E0EFD89D5C99}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5723C06B-0BE4-449E-8D14-A09D41C32264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5723C06B-0BE4-449E-8D14-A09D41C32264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5723C06B-0BE4-449E-8D14-A09D41C32264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5723C06B-0BE4-449E-8D14-A09D41C32264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7A49964-CF6A-442D-8C13-AC3059ECA15C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7A49964-CF6A-442D-8C13-AC3059ECA15C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7A49964-CF6A-442D-8C13-AC3059ECA15C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7A49964-CF6A-442D-8C13-AC3059ECA15C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089FB87B-FA32-476E-A79D-E0EFD89D5C99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089FB87B-FA32-476E-A79D-E0EFD89D5C99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089FB87B-FA32-476E-A79D-E0EFD89D5C99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089FB87B-FA32-476E-A79D-E0EFD89D5C99}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
