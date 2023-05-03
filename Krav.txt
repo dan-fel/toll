@@ -1,0 +1,46 @@
+Varje passage genom en betalstation i G�teborg kostar 8, 13 eller 18 kronor beroende p� tidpunkt. Det maximala beloppet per dag och fordon �r 60 kronor.
+
+Tider                   Belopp
+06:00-06:29     8 kr
+06:30-06:59     13 kr
+07:00-07:59     18 kr
+08:00-08:29     13 kr
+08:30-14:59     8 kr
+15:00-15:29     13 kr
+15:30-16:59     18 kr
+17:00-17:59     13 kr
+18:00-18:29     8 kr
+18:30-05:59     0 kr
+
+Tr�ngselskatt tas ut f�r fordon som passerar en betalstation m�ndag till fredag mellan 06.00 och 18.29.
+Skatt tas inte ut l�rdagar, helgdagar, dagar f�re helgdag eller under juli m�nad.
+Vissa fordon �r undantagna fr�n tr�ngselskatt. En bil som passerar flera betalstationer inom 60 minuter bara beskattas en g�ng.
+Det belopp som d� ska betalas �r det h�gsta beloppet av de passagerna.
+
+
+* Om en bil har kört förbi en station inom 60 minuter ska det inte tas ut nån trängselskatt.
+* Ingen skatt på lördagar, helgdagar, dag före helgdag eller under juli månad.
+* Om en bil passerar två stationer inom en timma ska det endast beskattas av det högsta beloppet.
+
+
+
+# TODO
+- Need to add a variable with the latest time that a given car has passed through a toll booth.
+- Is it possible to make the lookup cleaner and faster? Imagine we have thousand cars passing through any given checkpoint,
+that lookup should be instantenous really. But it needs to be hardcoded and extendible.
+    - Create a function that takes a timestamp and returns a value.
+    - This should be in its own class possibly..
+
+
+- Create a new class called toll-machine.
+- Everything here should at least be unit tested.
+
+# What else would I have wanted to do with the code if I had more time?
+ * Add some json loader.
+ * More exhaustive unit testing.
+ *
+
+What if we want to set different toll costs for different vehicles, for different weights,
+for combustion/electric vehicles
+
+We have to think of different currencies
