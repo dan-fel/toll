@@ -23,16 +23,10 @@ public class TollCalculator
         if (dates == null || dates.Count == 0) return 0;
 
         int totalFee = 0;
-
         DateTime prevTollVisit = dates[0];
 
         foreach (var tollVisit in dates)
         {
-            if (totalFee >= _tollData.GetMaxTollFeePerDay())
-            {
-                return _tollData.GetMaxTollFeePerDay();
-            }
-
             var prevFee = GetTollFee(prevTollVisit, vehicle);
             var currFee = GetTollFee(tollVisit, vehicle);
 
@@ -47,8 +41,14 @@ public class TollCalculator
                 totalFee += currFee;
             }
 
+            if (totalFee >= _tollData.GetMaxTollFeePerDay())
+            {
+                return _tollData.GetMaxTollFeePerDay();
+            }
+
             prevTollVisit = tollVisit;
         }
+
         return totalFee;
     }
     public bool vehicleRecentlyPassedToll(DateTime firstVisit, DateTime secondVisit)
@@ -64,11 +64,11 @@ public class TollCalculator
     public int GetTollFee(DateTime date, in Vehicle vehicle)
     {
         if (IsTollFreeDate(date) || IsTollFreeVehicle(vehicle)) return 0;
-        TimeSpan CurrentTime = new TimeSpan(date.Hour, date.Minute, 0);
+        TimeSpan TollVisitTime = new TimeSpan(date.Hour, date.Minute, 0);
 
         foreach (var timeSpan in _tollData.GetHourlyTollFeesMap())
         {
-            if (timeSpan.Key.Item1 <= CurrentTime && CurrentTime <= timeSpan.Key.Item2)
+            if (timeSpan.Key.Item1 <= TollVisitTime && TollVisitTime <= timeSpan.Key.Item2)
             {
                 return timeSpan.Value;
             }

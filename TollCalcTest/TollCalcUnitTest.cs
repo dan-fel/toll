@@ -10,6 +10,18 @@ public class TollFeeCalculatorTest
     private readonly TollDataHandler _tollData = new TollDataHandler(_maxTollFeePerDay, _tollTimeWindowMinutes);
 
     [TestMethod]
+    public void TollFreeDatesShallBeFree()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        Car car = new Car();
+
+        foreach (var date in _tollData.GetTollFreeDates())
+        {
+            Assert.AreEqual(true, tc.IsTollFreeDate(date));
+        }
+    }
+
+    [TestMethod]
     public void CarOnTollFreeDateShallNotPayTollFee()
     {
 
@@ -27,6 +39,7 @@ public class TollFeeCalculatorTest
     public void MotorBikeShallNotPayTollFee()
     {
         TollCalculator tc = new TollCalculator(in _tollData);
+        // Ideally we would create all the different types here and test.
         Motorbike mb = new Motorbike();
 
         foreach (var date in _tollData.GetHourlyTollFeesMap().Keys)
@@ -40,48 +53,95 @@ public class TollFeeCalculatorTest
     public void CarEntersSeveralTollsWithinAnHourShallOnlyPayMaxFeeInThatHour()
     {
         TollCalculator tc = new TollCalculator(in _tollData);
-        List<DateTime> dateTimes = new List<DateTime>();
+        List<DateTime> tollVisitTimes = new List<DateTime>();
         Car car = new Car();
 
-        dateTimes.Add(new DateTime(2013, 2, 1, 7, 20, 0));
-        dateTimes.Add(new DateTime(2013, 2, 1, 7, 30, 0));
-        dateTimes.Add(new DateTime(2013, 2, 1, 7, 40, 0));
-        dateTimes.Add(new DateTime(2013, 2, 1, 8, 3, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 7, 20, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 7, 30, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 7, 40, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 8, 3, 0));
 
-        Assert.AreEqual(18, tc.GetTotalTollFeeForDay(car, in dateTimes));
+        Assert.AreEqual(18, tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
+    }
+
+    [TestMethod]
+    public void CarEntersSeveralTollsOverDayShallPayMaxFee()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        List<DateTime> tollVisitTimes = new List<DateTime>();
+        Car car = new Car();
+
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 7, 20, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 9, 30, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 11, 40, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 14, 3, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 15, 3, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 16, 3, 0));
+
+        Assert.AreEqual(_tollData.GetMaxTollFeePerDay(), tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
+    }
+
+    [TestMethod]
+    public void CarEntersSeveralTollsOverDayShallPayAccumulatedFee()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        List<DateTime> tollVisitTimes = new List<DateTime>();
+        Car car = new Car();
+
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 7, 20, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 11, 40, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 15, 3, 0));
+        tollVisitTimes.Add(new DateTime(2013, 2, 1, 16, 3, 0));
+
+        var accumulatedFeeCost = tc.GetTollFee(tollVisitTimes[0], car) +
+                                tc.GetTollFee(tollVisitTimes[1], car) +
+                                tc.GetTollFee(tollVisitTimes[2], car) +
+                                tc.GetTollFee(tollVisitTimes[3], car);
+
+        Assert.AreEqual(accumulatedFeeCost, tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
     }
 
     [TestMethod]
     public void VehicleWithNoTollVisitsShallNotPayAnyFee()
     {
         TollCalculator tc = new TollCalculator(in _tollData);
-        List<DateTime> dateTimes = new List<DateTime>();
+        List<DateTime> tollVisitTimes = new List<DateTime>();
         Car car = new Car();
 
-        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in dateTimes));
+        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
     }
 
     [TestMethod]
     public void NullTollVisitsShallReturnZero()
     {
         TollCalculator tc = new TollCalculator(in _tollData);
-        List<DateTime> dateTimes = null!;
+        List<DateTime> tollVisitTimes = null!;
         Car car = new Car();
 
-        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in dateTimes));
+        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
     }
 
     [TestMethod]
     public void CarWithTwoVisitsOnExactSameTimeShallOnlyPayOnce()
     {
         TollCalculator tc = new TollCalculator(in _tollData);
-        List<DateTime> dateTimes = new List<DateTime>(); ;
+        List<DateTime> tollVisitTimes = new List<DateTime>(); ;
         Car car = new Car();
 
         var visit = new DateTime(2013, 2, 1, 7, 20, 0);
-        dateTimes.Add(visit);
-        dateTimes.Add(visit);
+        tollVisitTimes.Add(visit);
+        tollVisitTimes.Add(visit);
 
-        Assert.AreEqual(tc.GetTollFee(visit, car), tc.GetTotalTollFeeForDay(car, in dateTimes));
+        Assert.AreEqual(tc.GetTollFee(visit, car), tc.GetTotalTollFeeForDay(car, in tollVisitTimes));
     }
+
+    [TestMethod]
+    public void TollFreeVehiclesShallNotPayTollFee()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        var visit = new DateTime(2013, 2, 1, 7, 20, 0);
+
+        // .. use each Vehicle type to test.
+    }
+
 }
