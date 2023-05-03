@@ -9,10 +9,6 @@ public class TollFeeCalculatorTest
 
     private readonly TollDataHandler _tollData = new TollDataHandler(_maxTollFeePerDay, _tollTimeWindowMinutes);
 
-    public TollFeeCalculatorTest()
-    {
-
-    }
     [TestMethod]
     public void CarOnTollFreeDateShallNotPayTollFee()
     {
@@ -53,6 +49,39 @@ public class TollFeeCalculatorTest
         dateTimes.Add(new DateTime(2013, 2, 1, 8, 3, 0));
 
         Assert.AreEqual(18, tc.GetTotalTollFeeForDay(car, in dateTimes));
+    }
 
+    [TestMethod]
+    public void VehicleWithNoTollVisitsShallNotPayAnyFee()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        List<DateTime> dateTimes = new List<DateTime>();
+        Car car = new Car();
+
+        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in dateTimes));
+    }
+
+    [TestMethod]
+    public void NullTollVisitsShallReturnZero()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        List<DateTime> dateTimes = null!;
+        Car car = new Car();
+
+        Assert.AreEqual(0, tc.GetTotalTollFeeForDay(car, in dateTimes));
+    }
+
+    [TestMethod]
+    public void CarWithTwoVisitsOnExactSameTimeShallOnlyPayOnce()
+    {
+        TollCalculator tc = new TollCalculator(in _tollData);
+        List<DateTime> dateTimes = new List<DateTime>(); ;
+        Car car = new Car();
+
+        var visit = new DateTime(2013, 2, 1, 7, 20, 0);
+        dateTimes.Add(visit);
+        dateTimes.Add(visit);
+
+        Assert.AreEqual(tc.GetTollFee(visit, car), tc.GetTotalTollFeeForDay(car, in dateTimes));
     }
 }

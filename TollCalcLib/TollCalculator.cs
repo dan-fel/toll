@@ -20,26 +20,24 @@ public class TollCalculator
      */
     public int GetTotalTollFeeForDay(in Vehicle vehicle, in List<DateTime> dates)
     {
-        int totalFee = 0;
-        DateTime prevTollDate = dates[0];
+        if (dates == null || dates.Count == 0) return 0;
 
-        for (int i = 1; i < dates.Count; i++)
+        int totalFee = 0;
+
+        DateTime prevTollVisit = dates[0];
+
+        foreach (var tollVisit in dates)
         {
             if (totalFee >= _tollData.GetMaxTollFeePerDay())
             {
                 return _tollData.GetMaxTollFeePerDay();
             }
 
-            DateTime currentTollDate = dates[i];
-            Boolean vehicleRecentlyPassedToll = (currentTollDate.Date == prevTollDate.Date) &&
-                                                (currentTollDate - prevTollDate).TotalMinutes < _tollData.GetTollVisitTimeWindow(); ;
+            var prevFee = GetTollFee(prevTollVisit, vehicle);
+            var currFee = GetTollFee(tollVisit, vehicle);
 
-            var prevFee = GetTollFee(prevTollDate, vehicle);
-            var currFee = GetTollFee(currentTollDate, vehicle);
-
-            if (vehicleRecentlyPassedToll)
+            if (vehicleRecentlyPassedToll(prevTollVisit, tollVisit))
             {
-
                 if (totalFee > 0) totalFee -= prevFee;
                 if (currFee >= prevFee) prevFee = currFee;
                 totalFee += prevFee;
@@ -49,9 +47,13 @@ public class TollCalculator
                 totalFee += currFee;
             }
 
-            prevTollDate = currentTollDate;
+            prevTollVisit = tollVisit;
         }
         return totalFee;
+    }
+    public bool vehicleRecentlyPassedToll(DateTime firstVisit, DateTime secondVisit)
+    {
+        return (firstVisit.Date == secondVisit.Date) && Math.Abs((firstVisit - secondVisit).TotalMinutes) < _tollData.GetTollVisitTimeWindow(); ;
     }
 
     public bool IsTollFreeVehicle(Vehicle vehicle)
